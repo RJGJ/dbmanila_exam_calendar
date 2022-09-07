@@ -99,4 +99,7 @@
           
           .from-to
             display: flex
+      
+      .right
+        flex-grow: 1
 </style>

@@ -7,7 +7,13 @@
       <div class="days">
         <div v-for="day in days">{{ day }}</div>
       </div>
-      <CalendarRow v-for="i in Array(6)" :key="i" :number="i" />
+      <CalendarRow 
+        v-for="(_, i) in Array(6)" 
+        :key="i" 
+        :week="i" 
+        :first_day="$moment().startOf('month')"
+        class="row" 
+      />
     </div>
   </div>
 </template>
@@ -35,15 +41,15 @@
           'friday',
           'saturday',
         ],
-        // calendar
       }
     },
     mounted() {
-      // console.log(this.$moment)
+      this.first_day = this.$moment().startOf('month')
     }
   }
 </script>
 
 <style lang="stylus">
-  
+  .calendar
+    // border: solid 1px blue
 </style>
