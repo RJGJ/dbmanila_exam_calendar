@@ -30,4 +30,10 @@ Route::group(['prefix' => 'v1', 'middleware' => 'throttle:1000,1'], function () 
     Route::group(['prefix' => 'web'], function () {
         
     });
+
+    // Calendar Events
+    Route::group(['prefix' => 'event', 'controller' => 'EventController'], function() {
+        Route::get('list', 'getAllEvents');
+        Route::post('list', 'saveEvent');
+    });
 });
