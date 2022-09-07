@@ -1,18 +1,41 @@
 <template lang="html">
-  <main v-if="loaded">
-    <!-- Page Content -->
-    <!-- <page-content
-      :payload="records"
-      :h1="page.title"
-    /> -->
+  <main v-if="loaded" class="titiw">
+    <div class="container">
+      <div class="left">
+        <div class="top">
+          <button class="prev-month">prev</button>
+          <div>September</div>
+          <button class="next-month">next</button>
+        </div>
+        <form class="form">
+          <div class="input-group">
+            <label for="event">Event</label>
+            <input type="text" name="event" id="event" placeholder="Enter event">
+          </div>
+          <div class="from-to">
+            <div class="input-group">
+              <label for="from">From</label>
+              <input type="date" name="from" id="from">
+            </div>
+            <div class="input-group">
+              <label for="to">To</label>              <input type="date" name="to" id="to">
+            </div>
+          </div>
+          <div class="actions">
+            <button>Add</button>
+            <button>Override</button>
+          </div>
+        </form>
+      </div>
+      <div class="right">
+        <Calendar />
+      </div>
+    </div>
   </main>
 </template>
 
 <script>
   export default {
-    // components: {
-    //   PageContent: () => import('~/components/home/PageContent')
-    // },
     data: () => ({
       loaded: false,
       records: null,
@@ -31,37 +54,49 @@
     },
     asyncData ({ $axios, store, error }) {
       store.commit('global/modal/toggleModalStatus', { type: 'loader', status: true, item: { start: true } })
-
-      // return $axios.$get('web/page/landing/home').then(({
-      //   records
-      // }) => {
-        
-      // }).catch(() => {
-      //   error({ statusCode: 500 })
-      // })
     },
     head () {
       let host = process.env.BASE_URL
 
       return {
-        title: `Propan | ${this.page.title}`,
+        title: `Mahiwagang test`,
         link: [
           {
             rel: 'canonical',
             href: `${host}${this.$route.fullPath}`
           }
         ],
-        // meta: [
-        //   { hid: 'description', name: 'description', content: `${this.page.metadata.meta_description}` },
-        //   { hid: 'og:title', property: 'og:title', content: `${this.page.metadata.meta_title}` },
-        //   { hid: 'og:description', property: 'og:description', content: `${this.page.metadata.meta_description}` },
-        //   { hid: 'og:url', property: 'og:url', content: `${host}${this.$route.fullPath}` },
-        //   { hid: 'og:image', property: 'og:image', content: `${host}/logo.svg` },
-        //   { hid: 'og:image:alt', property: 'og:image:alt', content: this.page.title },
-        //   { hid: 'og:type', property: 'og:type', content: 'website' },
-        //   { hid: 'og:site_name', property: 'og:site_name', content: 'C! Magazine' },
-        // ]
       }
     }
   }
 </script>
+
+<style lang="stylus">
+  .titiw
+    width: 100vw
+    height: 100vh
+    
+    .container
+      border: solid 1px red
+      max-width: 1000px
+      margin: 10px auto
+      display: flex
+
+      .left
+        .top
+          display: flex
+          justify-content: space-between
+          margin-bottom: 10px
+        
+        .form
+          input
+            border: solid 1px black
+            
+          .input-group
+            display: flex
+            flex-direction: column
+            margin-bottom: 10px
+          
+          .from-to
+            display: flex
+</style>
