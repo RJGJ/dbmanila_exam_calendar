@@ -1,9 +1,11 @@
 <template>
   <div class="row">
-    <CalendarDay 
-      v-for="(_, i) in Array(7)" 
+    <!-- {{ first_day }} -->
+    <CalendarDay
+      v-for="(_, i) in Array(7)"
       :key="i"
-      :date="calculateDate(i)" 
+      :date="calculateDate(i)"
+      :current_month="current_month"
       class="date"
     />
   </div>
@@ -19,6 +21,10 @@
       first_day: {
         type: Object,
         default: () => ({})
+      },
+      current_month: {
+        type: Number,
+        default: () => 0
       }
     },
     data() {
@@ -36,7 +42,7 @@
       }
     },
     mounted() {
-      
+
     }
   }
 </script>
@@ -44,7 +50,7 @@
 <style lang="stylus">
   .row
     display: flex
-    // border: solid 1px green
+    border-bottom: solid 1px black
     width: 100%
     .date
       flex-basis: calc(100% / 7)

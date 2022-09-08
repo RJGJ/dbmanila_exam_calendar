@@ -1,5 +1,5 @@
 <template>
-  <div class="date">
+  <div :class="['date', date.month() !== current_month && 'inactive']">
     {{ date.date() }}
   </div>
 </template>
@@ -10,6 +10,10 @@
       date: {
         type: Object,
         default: () => ({})
+      },
+      current_month: {
+        type: Number,
+        default: () => 0
       }
     }
   }
@@ -17,5 +21,12 @@
 
 <style lang="stylus">
   .date
-    border: solid 1px red
+    aspect-ratio: 1
+    padding: 5px
+    transition: 200ms ease
+    border-right: solid 1px black
+    &.inactive
+      color: #aaa
+    &:hover
+      background-color: #eee
 </style>

@@ -5,15 +5,18 @@
     </div>
     <div class="inner">
       <div class="days">
-        <div v-for="day in days">{{ day }}</div>
+        <div class="day" v-for="(day, key) in days" :key="key">{{ day }}</div>
       </div>
-      <CalendarRow 
-        v-for="(_, i) in Array(6)" 
-        :key="i" 
-        :week="i" 
-        :first_day="$moment().startOf('month')"
-        class="row" 
-      />
+      <div class="rows">
+        <CalendarRow
+          v-for="(_, i) in Array(6)"
+          :key="i"
+          :week="i"
+          :first_day="first_day"
+          :current_month="first_day.month()"
+          class="row"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -22,15 +25,14 @@
   export default {
     props: {
       payload: {
-        type: Array,
-        default: () => ([
-          {
-
-          }
-        ])
+        type: Object,
+        default: () => ({
+          date: {},
+          events: []
+        })
       }
     },
-    data() {
+    data({ $moment }) {
       return {
         days: [
           'sunday',
@@ -41,15 +43,34 @@
           'friday',
           'saturday',
         ],
+        first_day: $moment()
       }
     },
     mounted() {
-      this.first_day = this.$moment().startOf('month')
-    }
+      this.first_day = this.payload.date.clone().date(1)
+      console.log(this.first_day)
+    },
+    watch: {
+      'payload': {
+        handler(newValue) {
+          this.first_day = this.$moment(newValue.date.date(1))
+        },
+        deep: true
+      }
+    },
   }
 </script>
 
 <style lang="stylus">
   .calendar
-    // border: solid 1px blue
+    .inner
+      .days
+        display: flex
+        .day
+          flex-grow: 1
+          flex-basis: calc(100% / 7)
+          text-align: center
+      .rows
+        border-top: solid 1px black
+        border-left: solid 1px black
 </style>
