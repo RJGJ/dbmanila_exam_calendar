@@ -1,12 +1,11 @@
 <template>
-  <div class="row">
-    <!-- {{ first_day }} -->
+  <div :class="attr['row']">
     <CalendarDay
       v-for="(_, i) in Array(7)"
       :key="i"
       :date="calculateDate(i)"
       :current_month="current_month"
-      class="date"
+      :class="attr['row__date']"
     />
   </div>
 </template>
@@ -47,11 +46,11 @@
   }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" module="attr">
   .row
     display: flex
     border-bottom: solid 1px black
     width: 100%
-    .date
+    &__date
       flex-basis: calc(100% / 7)
 </style>

@@ -1,20 +1,20 @@
 <template>
-  <div class="calendar">
-    <div class="top">
+  <div :class="attr['calendar']">
+    <div :class="attr['calendar__top']">
       <button>current month</button>
     </div>
-    <div class="inner">
-      <div class="days">
-        <div class="day" v-for="(day, key) in days" :key="key">{{ day }}</div>
+    <div :class="attr['calendar__inner']">
+      <div :class="attr['calendar__days']">
+        <div :class="attr['calendar__day']" v-for="(day, key) in days" :key="key">{{ day }}</div>
       </div>
-      <div class="rows">
+      <div :class="attr['calendar__rows']">
         <CalendarRow
           v-for="(_, i) in Array(6)"
           :key="i"
           :week="i"
           :first_day="first_day"
           :current_month="first_day.month()"
-          class="row"
+          :class="attr['calendar__row']"
         />
       </div>
     </div>
@@ -61,16 +61,16 @@
   }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" module="attr">
   .calendar
-    .inner
-      .days
+    &__inner
+      & ^[0]__days
         display: flex
-        .day
+        & ^[0]__day
           flex-grow: 1
           flex-basis: calc(100% / 7)
           text-align: center
-      .rows
+      & ^[0]__rows
         border-top: solid 1px black
         border-left: solid 1px black
 </style>
