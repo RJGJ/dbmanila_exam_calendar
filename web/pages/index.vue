@@ -29,7 +29,7 @@
         </form>
       </div>
       <div :class="attr['main__right']">
-        <Calendar :payload="calendar_payload"/>
+        <Calendar :payload="calendar_payload" @current-month="setToCurrentMonth"/>
       </div>
     </div>
   </main>
@@ -70,6 +70,10 @@
         } else {
           this.date = this.date.clone().subtract(1, 'months')
         }
+        this.calendar_payload.date = this.date
+      },
+      setToCurrentMonth() {
+        this.date = this.$moment()
         this.calendar_payload.date = this.date
       }
     },

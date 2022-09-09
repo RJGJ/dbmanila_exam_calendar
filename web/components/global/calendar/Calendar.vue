@@ -1,7 +1,7 @@
 <template>
   <div :class="attr['calendar']">
     <div :class="attr['calendar__top']">
-      <button>current month</button>
+      <button @click="$emit('current-month')">current month</button>
     </div>
     <div :class="attr['calendar__inner']">
       <div :class="attr['calendar__days']">
@@ -48,7 +48,7 @@
     },
     mounted() {
       this.first_day = this.payload.date.clone().date(1)
-      console.log(this.first_day)
+      // console.log(this.first_day)
     },
     watch: {
       'payload': {
@@ -63,6 +63,14 @@
 
 <style lang="stylus" module="attr">
   .calendar
+    &__top
+      display: flex
+      justify-content: center
+      background-color: black
+      button
+        padding: 5px
+        color: white
+        cursor: pointer
     &__inner
       & ^[0]__days
         display: flex
