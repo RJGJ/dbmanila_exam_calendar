@@ -150,6 +150,7 @@
     backface-visibility: hidden
     font-family: 'Merriweather Sans', sans-serif
     font-variant-numeric: lining-nums
+    margin: 0
 
   *,
   *:before,
