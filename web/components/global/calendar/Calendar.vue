@@ -15,6 +15,7 @@
           :first_day="first_day"
           :current_month="first_day.month()"
           :class="attr['calendar__row']"
+          :events="payload.events"
         />
       </div>
     </div>

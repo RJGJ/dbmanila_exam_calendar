@@ -6,6 +6,7 @@
       :date="calculateDate(i)"
       :current_month="current_month"
       :class="attr['row__date']"
+      :events="events"
     />
   </div>
 </template>
@@ -24,6 +25,10 @@
       current_month: {
         type: Number,
         default: () => 0
+      },
+      events: {
+        type: Array,
+        required: true
       }
     },
     data() {

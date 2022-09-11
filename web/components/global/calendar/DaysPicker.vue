@@ -14,7 +14,7 @@
           v-model="day.checked"
         />
       </div>
-      <pre>{{ dates }}</pre>
+      <!-- <pre>{{ dates }}</pre> -->
     </div>
   </div>
 </template>
@@ -62,6 +62,9 @@
     &__list
       display: flex
       flex-wrap: wrap
+      & ^[0]__item
+        &:not(&:last-child)
+          margin-right: 10px
     input
       -webkit-appearance: auto
 

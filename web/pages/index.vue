@@ -7,8 +7,17 @@
           <div>{{ date.format('YYYY-MM-DD') }}</div>
           <button @click="changeMonth(true)" :class="attr['main__next-month']">next</button>
         </div>
-        <form :class="attr['main__form']">
-          <div :class="attr['main__input-group']">
+        <ValidationObserver
+          tag="form"
+          @submit.prevent :class="attr['main__form']"
+        >
+          <ValidationProvider
+            tag="div"
+            name="title"
+            rules="required"
+            v-slot="{ errors }"
+            :class="attr['main__input-group']"
+          >
             <label for="event">Event</label>
             <input
               v-model="form_data.name"
@@ -18,7 +27,8 @@
               placeholder="Enter event"
               required
             />
-          </div>
+            <validationTemplate :payload="{ errors }" />
+          </ValidationProvider>
           <div :class="attr['main__from-to']">
             <div :class="attr['main__input-group']">
               <label for="from">From</label>
@@ -44,14 +54,14 @@
                 v-show="form_data.from && form_data.to"
                 v-model="form_data.days"
               />
-              <pre>{{ form_data.days}}</pre>
+              <pre>{{ calendar_payload.events }}</pre>
             </div>
           </div>
           <div :class="attr['main__actions']">
-            <button>Add</button>
+            <button @click="addEvent">Add</button>
             <button>Override</button>
           </div>
-        </form>
+        </ValidationObserver>
       </div>
       <div :class="attr['main__right']">
         <Calendar :payload="calendar_payload" @current-month="setToCurrentMonth"/>
@@ -68,9 +78,7 @@
     data: () => ({
       loaded: false,
       records: null,
-      page: {
-        title: 'Home'
-      },
+      page: { title: 'Home' },
       calendar_payload: {
         date: {},
         events: []
@@ -94,14 +102,15 @@
         name: '',
         from: '',
         to: '',
+        color: '',
         days: [
+          { name: 'Sunday', checked: false, disabled: false },
           { name: 'Monday', checked: false, disabled: false },
           { name: 'Tuesday', checked: false, disabled: false },
           { name: 'Wednesday', checked: false, disabled: true },
           { name: 'Thursday', checked: false, disabled: false },
           { name: 'Friday', checked: false, disabled: false },
           { name: 'Saturday', checked: false, disabled: false },
-          { name: 'Sunday', checked: false, disabled: false },
         ]
       }
     }),
@@ -156,12 +165,13 @@
        * using the FROM and TO dates
        */
       setAvailableDays() {
-        let available_date = []
         const
           from = this.$moment(this.form_data.from),
           to = this.$moment(this.form_data.to),
           difference = to.diff(from, 'days')
         if (Number.isNaN(difference)) return
+
+        let available_date = []
         for (let index = 0; index <= difference; index++) {
           const day_index = this.$moment().add(index, 'days')
           available_date.push(day_index.day())
@@ -169,6 +179,7 @@
         }
         // remove duplicates
         available_date = [ ...new Set(available_date) ]
+
         this.form_data.days = this.form_data.days.map((day, idx) => {
           // console.log(available_date.includes(idx), idx)
           const result = {
@@ -178,6 +189,30 @@
           // console.log(result)
           return result
         })
+      },
+      randomColor() {
+        return '#' + Math.floor(Math.random()*16777215).toString(16)
+      },
+      addEvent() {
+        this.form_data.color = this.randomColor()
+        this
+          .calendar_payload
+          .events
+          .push(this.form_data)
+        this.form_data = {
+          name: '',
+          from: '',
+          to: '',
+          days: [
+            { name: 'Monday', checked: false, disabled: false },
+            { name: 'Tuesday', checked: false, disabled: false },
+            { name: 'Wednesday', checked: false, disabled: true },
+            { name: 'Thursday', checked: false, disabled: false },
+            { name: 'Friday', checked: false, disabled: false },
+            { name: 'Saturday', checked: false, disabled: false },
+            { name: 'Sunday', checked: false, disabled: false },
+          ]
+        }
       }
     },
     watch: {
@@ -199,7 +234,7 @@
         this.toggleModalStatus({ type: 'loader', status: true, item: { start: false } })
         this.loaded = true
       }, 500)
-      this.date = this.$moment().add(1, 'months')
+      this.date = this.$moment()
       this.calendar_payload.date = this.date
     },
     asyncData ({ $axios, store, error }) {
@@ -225,7 +260,6 @@
   .main
     width: 100vw
     height: 100vh
-    // background-color: black
     margin: 0
     &__container
       border: solid 1px red
@@ -233,6 +267,7 @@
       margin: 10px auto
       display: flex
       & ^[0]__left
+        flex: 0 1 30%
         & ^[0]__top
           display: flex
           justify-content: space-between
