@@ -2,16 +2,43 @@
   <div class="container">
     <div class="top">
       <div>
-        <button id="prev-btn">prev</button>
+        <button id="prev-btn">
+          {{ date.clone().subtract(1, 'months').format('MMMM') }}
+        </button>
       </div>
       <div>
-        <span>{{ date.format('YYYY-MM-DD') }}</span>
+        <span>{{ date.format('MMMM DD YYYY') }}</span>
       </div>
       <div>
-        <button id="next-btn">next</button>
+        <button id="next-btn">
+          {{ date.clone().add(1, 'months').format('MMMM') }}
+        </button>
       </div>
     </div>
     <div class="calendar" id="calendar"></div>
+    <div class="add-event">
+      <div class="add-event__form-wrap">
+        <form id="add-form" class="add-event__form">
+          <div class="add-event__input-group">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title">
+            <span class="add-event__error-dispay">&nbsp;</span>
+          </div>
+          <div class="add-event__two-col">
+            <div class="add-event__input-group">
+              <label for="from">From</label>
+              <input type="text" name="from" id="from" class="add-event__input">
+              <span class="error-display">&nbsp;</span>
+            </div>
+            <div class="add-event__input-group">
+              <label for="to">To</label>
+              <input type="text" name="to" id="to" class="add-event__input">
+              <span class="add-event__error-display">&nbsp;</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -26,15 +53,12 @@
       buildCalendar(current_date) {
         const CALENDAR_SIZE = [7, 6] // days per week, weeks per month
         const calendar_element = document.querySelector('#calendar')
-
         calendar_element.innerHTML = ''
-        
         let day_counter = this.shiftDates(current_date)
         // week loop
         for (let week_idx = 0; week_idx < CALENDAR_SIZE[1]; week_idx++) {
           const row = this.createRow()
           calendar_element.appendChild(row)
-          
           // days loop
           for (let day_idx = 0; day_idx < CALENDAR_SIZE[0]; day_idx++) {
             const day = this.createDay(day_counter)
@@ -73,15 +97,13 @@
         day.innerHTML = `
           <div class="calendar__inner">
             <span class="calendar__day-date">${ date.date() }</span>
-            ${events.map(event => {
-              return `
-                <div class="calendar__events-wrap">
-                  <div class="calendar__event" style="--event_color: ${ event.color };">
-                    <span class="calendar__event-title">${ event.title }</span>
-                  </div>
+            ${events.map(event => `
+              <div class="calendar__events-wrap">
+                <div class="calendar__event" style="--event_color: ${ event.color };">
+                  <span class="calendar__event-title">${ event.title }</span>
                 </div>
-              `
-            }).join('')}
+              </div>
+            `).join('')}
           </div>
         `
         return day
@@ -90,20 +112,8 @@
         return [
           {
             color: 'rgb(255, 0, 0)',
-            title: 'test event'
+            title: 'test'
           },
-          {
-            color: 'rgb(0, 255, 0)',
-            title: 'test event 2'
-          },
-          {
-            color: 'rgb(0, 255, 0)',
-            title: 'test event 2'
-          },
-          {
-            color: 'rgb(0, 255, 0)',
-            title: 'test event 2'
-          }
         ]
       },
       changeMonth(increment) {
@@ -149,4 +159,23 @@
               & ^[0]__event-title
                 border: solid 1px var(--event_color)
                 text-overflow: ellipsis
+  
+  .add-event
+    display: none
+    position: fixed
+    top: 0
+    left: 0
+    width: 100vw
+    min-height: 100vh
+    justify-content: center
+    align-items: center
+    background-color: rgba(0, 0, 0, 0.3)
+    &--active
+      display: flex
+    &__form-wrap
+      max-width: 600px
+      width: 500px
+      padding: 20px
+      border-radius: 8px
+      background-color: var(--theme_white)
 </style>
