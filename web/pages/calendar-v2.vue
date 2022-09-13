@@ -5,7 +5,7 @@
         <button id="prev-btn">prev</button>
       </div>
       <div>
-        <span>{{ $moment().format('YYYY-MM-DD') }}</span>
+        <span>{{ date.format('YYYY-MM-DD') }}</span>
       </div>
       <div>
         <button id="next-btn">next</button>
@@ -19,13 +19,15 @@
   export default {
     data({ $moment }) {
       return {
-        date: $moment()
+        date: $moment(),
       }
     },
     methods: {
       buildCalendar(current_date) {
         const CALENDAR_SIZE = [7, 6] // days per week, weeks per month
         const calendar_element = document.querySelector('#calendar')
+
+        calendar_element.innerHTML = ''
         
         let day_counter = this.shiftDates(current_date)
         // week loop
@@ -64,28 +66,58 @@
       createDay(date) {
         const day = document.createElement('div')
         day.classList.add('calendar__day')
-        if (date.month() !== this.$moment().month()) {
+        if (date.month() !== this.date.month()) {
           day.classList.add('calendar__day--diff-month')
         }
-        day.innerHTML = `<p>${ date.date() }</p>`
+        const events = this.getEventsOfDay(date)
+        day.innerHTML = `
+          <div class="calendar__inner">
+            <span class="calendar__day-date">${ date.date() }</span>
+            ${events.map(event => {
+              return `
+                <div class="calendar__events-wrap">
+                  <div class="calendar__event" style="--event_color: ${ event.color };">
+                    <span class="calendar__event-title">${ event.title }</span>
+                  </div>
+                </div>
+              `
+            }).join('')}
+          </div>
+        `
         return day
+      },
+      getEventsOfDay(date) {
+        return [
+          {
+            color: 'rgb(255, 0, 0)',
+            title: 'test event'
+          },
+          {
+            color: 'rgb(0, 255, 0)',
+            title: 'test event 2'
+          },
+          {
+            color: 'rgb(0, 255, 0)',
+            title: 'test event 2'
+          },
+          {
+            color: 'rgb(0, 255, 0)',
+            title: 'test event 2'
+          }
+        ]
       },
       changeMonth(increment) {
         if (increment) {
-          this.date = this.date.add(1, 'months')
-          return
+          this.date = this.date.clone().add(1, 'months')
+        } else {
+          this.date = this.date.clone().subtract(1, 'months')
         }
-        this.date = this.date.subtract(1, 'months')
+        this.buildCalendar(this.date)
       }
     },
     mounted() {
       this.buildCalendar(this.date)
       this.addListeners()
-    },
-    watchers: {
-      date(new_val, old_val) {
-        this.buildCalendar(new_val)
-      }
     }
   }
 </script>
@@ -102,12 +134,19 @@
     display: flex
     flex-direction: column
     &__row
-      border: solid 1px red
       display: flex
       flex-direction: row
       & ^[0]__day
         flex-basis: calc(100% / 7)
-        // aspect-ratio: 0
+        aspect-ratio: 1
         &--diff-month
           color: rgba(0, 0, 0, 0.4)
+        & ^[0]__inner
+          & ^[0]__day-date
+            font-size: 16px
+          & ^[0]__events-wrap
+            & ^[0]__event
+              & ^[0]__event-title
+                border: solid 1px var(--event_color)
+                text-overflow: ellipsis
 </style>
