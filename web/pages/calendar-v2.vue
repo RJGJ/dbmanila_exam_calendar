@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="calendar" id="calendar"></div>
-    <div class="add-event">
+    <div class="add-event" id="add-event">
       <div class="add-event__form-wrap">
         <form id="add-form" class="add-event__form">
           <div class="add-event__input-group">
@@ -43,6 +43,8 @@
 </template>
 
 <script>
+  import { TimelineLite } from 'gsap'
+
   export default {
     data({ $moment }) {
       return {
@@ -106,6 +108,10 @@
             `).join('')}
           </div>
         `
+        day.setAttribute('data-date', date.format('YYYY-MM-DD'))
+        day.addEventListener('click', () => {
+          this.handleDateClick(date)
+        })
         return day
       },
       getEventsOfDay(date) {
@@ -123,6 +129,17 @@
           this.date = this.date.clone().subtract(1, 'months')
         }
         this.buildCalendar(this.date)
+      },
+      handleDateClick(date) {
+        this.openEventForm(date)
+      },
+      openEventForm(date=null) {
+        const add_event_el = document.querySelector('#add-event')
+        add_event_el.classList.add('add_event--active')
+        const timeline = new TimelineLite()
+        timeline
+          .to(add_event_el, 1, { opacity: 1 })
+        console.log(add_event_el)
       }
     },
     mounted() {
@@ -162,6 +179,7 @@
   
   .add-event
     display: none
+    opacity: 0
     position: fixed
     top: 0
     left: 0
@@ -170,7 +188,7 @@
     justify-content: center
     align-items: center
     background-color: rgba(0, 0, 0, 0.3)
-    &--active
+    &.&--active
       display: flex
     &__form-wrap
       max-width: 600px
