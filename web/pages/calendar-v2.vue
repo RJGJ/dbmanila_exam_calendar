@@ -16,25 +16,57 @@
       </div>
     </div>
     <div class="calendar" id="calendar"></div>
-    <div class="add-event" id="add-event">
+    <div class="add-event add-event--active" id="add-event">
       <div class="add-event__form-wrap">
         <form id="add-form" class="add-event__form">
           <div class="add-event__input-group">
             <label for="title">Title</label>
-            <input type="text" name="title" id="title">
+            <input type="text" name="title" id="title" class="add-event__input" placeholder="Enter event title">
             <span class="add-event__error-dispay">&nbsp;</span>
           </div>
           <div class="add-event__two-col">
             <div class="add-event__input-group">
               <label for="from">From</label>
-              <input type="text" name="from" id="from" class="add-event__input">
+              <input type="date" name="from" id="from" class="add-event__input" placeholder="Enter starting date">
               <span class="error-display">&nbsp;</span>
             </div>
             <div class="add-event__input-group">
               <label for="to">To</label>
-              <input type="text" name="to" id="to" class="add-event__input">
+              <input type="date" name="to" id="to" class="add-event__input" placeholder="Enter end date">
               <span class="add-event__error-display">&nbsp;</span>
             </div>
+          </div>
+          <div class="add-event__days">
+            <ul class="add-event__days-wrap">
+              <li class="add-event__day day-0">
+                <input type="checkbox" name="day-0" id="day-0">
+                <label for="day-0">Sunday</label>
+              </li>
+              <li class="add-event__day day-1">
+                <input type="checkbox" name="day-1" id="day-1">
+                <label for="day-1">Monday</label>
+              </li>
+              <li class="add-event__day day-2">
+                <input type="checkbox" name="day-2" id="day-2">
+                <label for="day-2">Tuesday</label>
+              </li>
+              <li class="add-event__day day-3">
+                <input type="checkbox" name="day-3" id="day-3">
+                <label for="day-3">Wednesday</label>
+              </li>
+              <li class="add-event__day day-4">
+                <input type="checkbox" name="day-4" id="day-4">
+                <label for="day-4">Thursday</label>
+              </li>
+              <li class="add-event__day day-5">
+                <input type="checkbox" name="day-5" id="day-5">
+                <label for="day-5">Friday</label>
+              </li>
+              <li class="add-event__day day-6">
+                <input type="checkbox" name="day-6" id="day-6">
+                <label for="day-6">Saturday</label>
+              </li>
+            </ul>
           </div>
         </form>
       </div>
@@ -43,7 +75,7 @@
 </template>
 
 <script>
-  import { TimelineLite } from 'gsap'
+  import gsap from 'gsap'
 
   export default {
     data({ $moment }) {
@@ -75,6 +107,12 @@
         })
         document.querySelector('#next-btn').addEventListener('click',  () => {
           this.changeMonth(true)
+        })
+
+        const add_event_el = document.querySelector('#add-event')
+        add_event_el.addEventListener('click', (ev) => {
+          if (ev.target != add_event_el) return
+          this.closeEventForm()
         })
       },
       shiftDates(current_date) {
@@ -136,10 +174,20 @@
       openEventForm(date=null) {
         const add_event_el = document.querySelector('#add-event')
         add_event_el.classList.add('add_event--active')
-        const timeline = new TimelineLite()
+        const timeline = gsap.timeline()
         timeline
-          .to(add_event_el, 1, { opacity: 1 })
-        console.log(add_event_el)
+          .to(add_event_el, 0, { zIndex: 2 })
+          .to(add_event_el, 0.4, { opacity: 1 })
+        timeline.play()
+      },
+      closeEventForm() {
+        const add_event_el = document.querySelector('#add-event')
+        add_event_el.classList.remove('add_event--active')
+        const timeline = gsap.timeline()
+        timeline
+          .to(add_event_el, 0.4, { opacity: 0 })
+          .to(add_event_el, 0, { zIndex: -1 })
+        timeline.play()
       }
     },
     mounted() {
@@ -178,8 +226,9 @@
                 text-overflow: ellipsis
   
   .add-event
-    display: none
+    display: flex
     opacity: 0
+    z-index: -1
     position: fixed
     top: 0
     left: 0
@@ -188,12 +237,33 @@
     justify-content: center
     align-items: center
     background-color: rgba(0, 0, 0, 0.3)
-    &.&--active
-      display: flex
+    &--active
+      // display: flex
     &__form-wrap
       max-width: 600px
       width: 500px
       padding: 20px
       border-radius: 8px
       background-color: var(--theme_white)
+      & ^[0]__form
+        & ^[0]__input-group
+          display: flex
+          flex-flow: column
+          & ^[0]__input
+            border-bottom: solid 1px black
+            padding: 10px 0
+          & ^[0]__error-display
+            //
+        & ^[0]__two-col
+          display: flex
+          flex-flow: row wrap
+          justify-content: space-between
+        & ^[0]__days
+          & ^[0]__days-wrap
+            display: flex
+            flex-flow: row wrap
+            list-style-type: none
+            padding-left: 0
+            & ^[0]__day
+              padding-right: 5px
 </style>
