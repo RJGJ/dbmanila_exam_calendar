@@ -27,7 +27,7 @@
           <div class="add-event__two-col">
             <div class="add-event__input-group">
               <label for="from">From</label>
-              <input type="date" name="from" id="from" class="add-event__input" placeholder="Enter starting date">
+              <input type="date" name="from" id="from" class="add-event__input" placeholder="Enter starting date" readonly>
               <span class="error-display">&nbsp;</span>
             </div>
             <div class="add-event__input-group">
@@ -39,31 +39,66 @@
           <div class="add-event__days">
             <ul class="add-event__days-wrap">
               <li class="add-event__day day-0">
-                <input type="checkbox" name="day-0" id="day-0">
+                <input
+                  type="checkbox"
+                  data-day="0"
+                  name="day-0"
+                  id="day-0"
+                />
                 <label for="day-0">Sunday</label>
               </li>
               <li class="add-event__day day-1">
-                <input type="checkbox" name="day-1" id="day-1">
+                <input
+                  type="checkbox"
+                  data-day="1"
+                  name="day-1"
+                  id="day-1"
+                />
                 <label for="day-1">Monday</label>
               </li>
               <li class="add-event__day day-2">
-                <input type="checkbox" name="day-2" id="day-2">
+                <input
+                  type="checkbox"
+                  data-day="2"
+                  name="day-2"
+                  id="day-2"
+                />
                 <label for="day-2">Tuesday</label>
               </li>
               <li class="add-event__day day-3">
-                <input type="checkbox" name="day-3" id="day-3">
+                <input
+                  type="checkbox"
+                  data-day="3"
+                  name="day-3"
+                  id="day-3"
+                />
                 <label for="day-3">Wednesday</label>
               </li>
               <li class="add-event__day day-4">
-                <input type="checkbox" name="day-4" id="day-4">
+                <input
+                  type="checkbox"
+                  data-day="4"
+                  name="day-4"
+                  id="day-4"
+                />
                 <label for="day-4">Thursday</label>
               </li>
               <li class="add-event__day day-5">
-                <input type="checkbox" name="day-5" id="day-5">
+                <input
+                  type="checkbox"
+                  data-day="5"
+                  name="day-5"
+                  id="day-5"
+                />
                 <label for="day-5">Friday</label>
               </li>
               <li class="add-event__day day-6">
-                <input type="checkbox" name="day-6" id="day-6">
+                <input
+                  type="checkbox"
+                  data-day="6"
+                  name="day-6"
+                  id="day-6"
+                />
                 <label for="day-6">Saturday</label>
               </li>
             </ul>
@@ -81,6 +116,11 @@
     data({ $moment }) {
       return {
         date: $moment(),
+        form_data:{
+          name: '',
+          from: {},
+          to: {},
+        }
       }
     },
     methods: {
@@ -102,10 +142,10 @@
         }
       },
       addListeners() {
-        document.querySelector('#prev-btn').addEventListener('click',  () => {
+        document.querySelector('#prev-btn').addEventListener('click', () => {
           this.changeMonth(false)
         })
-        document.querySelector('#next-btn').addEventListener('click',  () => {
+        document.querySelector('#next-btn').addEventListener('click', () => {
           this.changeMonth(true)
         })
 
@@ -114,6 +154,30 @@
           if (ev.target != add_event_el) return
           this.closeEventForm()
         })
+
+        document.querySelectorAll('.add-event__days input[type="checkbox"]')
+          .forEach(checkbox => {
+            checkbox.addEventListener('click', () => {
+              console.log(checkbox)
+            })
+          })
+
+        document.querySelector('#to').addEventListener('change', (ev) => {
+          const to = ev.target
+          const from = document.querySelector('#from')
+
+          if (!to.value && !from.value) return
+
+          // calculate the days of the week that will be visible
+          this.hideDaysOfWeek()
+        })
+      },
+      hideDaysOfWeek(to, from){
+        document
+          .querySelectorAll('.add-event__days input[type="checkbox"]')
+          .forEach(input => {
+
+          })
       },
       shiftDates(current_date) {
         // set to first day of the month
@@ -170,41 +234,60 @@
       },
       handleDateClick(date) {
         this.openEventForm(date)
+        this.setToDateLimit()
+        this.form_data.from = date
+      },
+      setToDateLimit(date) {
+        const first_date_allowed_date = date.clone().add(1, 'days')
+        document.querySelector('#to')
+        // new HTMLInputElement().min
+        // TODO: continue here
       },
       openEventForm(date=null) {
         const add_event_el = document.querySelector('#add-event')
         add_event_el.classList.add('add_event--active')
         const timeline = gsap.timeline()
         timeline
-          .to(add_event_el, 0, { zIndex: 2 })
-          .to(add_event_el, 0.4, { opacity: 1 })
+          .to(add_event_el, { zIndex: 2, duration: 0 })
+          .to(add_event_el, { opacity: 1, duration: 0.4 })
         timeline.play()
+        document.body.style.overflow = 'hidden'
       },
       closeEventForm() {
         const add_event_el = document.querySelector('#add-event')
         add_event_el.classList.remove('add_event--active')
         const timeline = gsap.timeline()
         timeline
-          .to(add_event_el, 0.4, { opacity: 0 })
-          .to(add_event_el, 0, { zIndex: -1 })
+          .to(add_event_el, { opacity: 0, duration: 0.4 })
+          .to(add_event_el, { zIndex: -1, duration: 0 })
         timeline.play()
+        document.body.style.overflow = 'auto'
       }
     },
     mounted() {
       this.buildCalendar(this.date)
       this.addListeners()
-    }
+    },
+    watch: {
+      'form_data.from'(newValue, oldValue) {
+        const datepicker_value = newValue.toDate()
+        const from_input = document.querySelector('input#from')
+        console.log(from_input.value)
+        from_input.value = datepicker_value.toISOString().substring(0,10);
+        console.log(from_input.value)
+      }
+    },
   }
 </script>
 
 <style lang="stylus">
   .container
     //
-      
+
   .top
     display: flex
     justify-content: space-between
-  
+
   .calendar
     display: flex
     flex-direction: column
@@ -224,7 +307,7 @@
               & ^[0]__event-title
                 border: solid 1px var(--event_color)
                 text-overflow: ellipsis
-  
+
   .add-event
     display: flex
     opacity: 0
@@ -266,4 +349,12 @@
             padding-left: 0
             & ^[0]__day
               padding-right: 5px
+              display: flex
+              flex-flow: row wrap
+              justify-content: flex-start
+              align-items: center
+              input[type="checkbox"]
+                -webkit-appearance: auto
+                height: 10px
+                width: 100%
 </style>
