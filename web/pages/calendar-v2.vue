@@ -169,25 +169,24 @@
           if (!to.value && !from.value) return
 
           // calculate the days of the week that will be visible
-          this.hideDaysOfWeek()
+          this.showDaysOfWeek(this.$moment(to.value), this.$moment(from.value))
         })
       },
-      hideDaysOfWeek(to, from){
-        console.log('hideDaysOfWeek')
-        const days_duration = to.diff(from, days)
-        const day_checkboxes = [...document.querySelectorAll('.add-event__days input[type="checkbox"]')]
-        Array(days_duration).keys().map((key) => {
-          console.log(key)
+      showDaysOfWeek(to, from){
+        console.log('showDaysOfWeek')
+        const days_duration = to.diff(from, 'days')
+        // const day_checkboxes = [...document.querySelectorAll('.add-event__day')]
+        const checkbox_containers = [...new Array(7)].map((_, key) => {
+          const container = document.querySelector(`.add-event__day.day-${key}`)
+          // container.classList.add('hidden')
+          return container
+        });
+        [...Array(days_duration)].map((_, key) => {
+          const date = from.clone().add(key, 'days')
+          const tommorow = date.clone().add(1, 'days')
+          checkbox_containers[date.day()].classList.remove('hidden')
+          checkbox_containers[tommorow.day()].classList.remove('hidden')
         })
-        
-
-        // document
-        //   .querySelectorAll('.add-event__days input[type="checkbox"]')
-        //   .forEach(input => {
-        //     const day = parseInt(input.getAttribute('data-day'))
-        //     console.log(day)
-
-        //   })
       },
       shiftDates(current_date) {
         // set to first day of the month
@@ -243,16 +242,26 @@
         this.buildCalendar(this.date)
       },
       handleDateClick(date) {
-        console.log(date.format('YYYY-MMMM-DD'))
+        this.hideDaysOfWeek()
+        this.clearToDate()
         this.openEventForm(date)
         this.setToDateLimit(date)
         this.form_data.from = date
+      },
+      hideDaysOfWeek() {
+        [...new Array(7)].map((_, key) => {
+          const container = document.querySelector(`.add-event__day.day-${key}`)
+          container.classList.add('hidden')
+        });
+      },
+      clearToDate() {
+        document.querySelector('#to').value = ''
       },
       setToDateLimit(date) {
         document.querySelector('#to').min = date
           .clone()
           .add(1, 'days')
-          .format('YYYY-MM-DD')        
+          .format('YYYY-MM-DD')
       },
       openEventForm(date=null) {
         const add_event_el = document.querySelector('#add-event')
@@ -363,6 +372,8 @@
               flex-flow: row wrap
               justify-content: flex-start
               align-items: center
+              &.hidden
+                display: none
               input[type="checkbox"]
                 -webkit-appearance: auto
                 height: 10px
