@@ -135,7 +135,7 @@
           calendar_element.appendChild(row)
           // days loop
           for (let day_idx = 0; day_idx < CALENDAR_SIZE[0]; day_idx++) {
-            const day = this.createDay(day_counter)
+            const day = this.createDay(day_counter.clone())
             row.appendChild(day)
             day_counter.add(1, 'days')
           }
@@ -173,11 +173,21 @@
         })
       },
       hideDaysOfWeek(to, from){
-        document
-          .querySelectorAll('.add-event__days input[type="checkbox"]')
-          .forEach(input => {
+        console.log('hideDaysOfWeek')
+        const days_duration = to.diff(from, days)
+        const day_checkboxes = [...document.querySelectorAll('.add-event__days input[type="checkbox"]')]
+        Array(days_duration).keys().map((key) => {
+          console.log(key)
+        })
+        
 
-          })
+        // document
+        //   .querySelectorAll('.add-event__days input[type="checkbox"]')
+        //   .forEach(input => {
+        //     const day = parseInt(input.getAttribute('data-day'))
+        //     console.log(day)
+
+        //   })
       },
       shiftDates(current_date) {
         // set to first day of the month
@@ -233,15 +243,16 @@
         this.buildCalendar(this.date)
       },
       handleDateClick(date) {
+        console.log(date.format('YYYY-MMMM-DD'))
         this.openEventForm(date)
-        this.setToDateLimit()
+        this.setToDateLimit(date)
         this.form_data.from = date
       },
       setToDateLimit(date) {
-        const first_date_allowed_date = date.clone().add(1, 'days')
-        document.querySelector('#to')
-        // new HTMLInputElement().min
-        // TODO: continue here
+        document.querySelector('#to').min = date
+          .clone()
+          .add(1, 'days')
+          .format('YYYY-MM-DD')        
       },
       openEventForm(date=null) {
         const add_event_el = document.querySelector('#add-event')
@@ -272,9 +283,7 @@
       'form_data.from'(newValue, oldValue) {
         const datepicker_value = newValue.toDate()
         const from_input = document.querySelector('input#from')
-        console.log(from_input.value)
         from_input.value = datepicker_value.toISOString().substring(0,10);
-        console.log(from_input.value)
       }
     },
   }
@@ -325,6 +334,7 @@
     &__form-wrap
       max-width: 600px
       width: 500px
+      margin: 0 20px
       padding: 20px
       border-radius: 8px
       background-color: var(--theme_white)
