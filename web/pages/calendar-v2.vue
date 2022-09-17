@@ -120,7 +120,15 @@
           name: '',
           from: {},
           to: {},
-        }
+        },
+        events: [
+          {
+            title: 'test event',
+            from: $moment(),
+            to: $moment().add(7, 'days'),
+            days: [0, 1, 2, 3, 4, 5, 6]
+          }
+        ]
       }
     },
     methods: {
@@ -226,12 +234,12 @@
         return day
       },
       getEventsOfDay(date) {
-        return [
-          {
-            color: 'rgb(255, 0, 0)',
-            title: 'test'
-          },
-        ]
+        return this.events.filter(event => {
+          console.log(date.date(), event.from.date(), event.to.date())
+          const is_within_range = date.date() >= event.from.date() && date.date() <= event.to.date()
+          const day_included = true
+          return is_within_range && day_included
+        })
       },
       changeMonth(increment) {
         if (increment) {
