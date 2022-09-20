@@ -103,6 +103,10 @@
               </li>
             </ul>
           </div>
+          <div class="form-actions">
+            <button type="submit">add</button>
+            <button>edit</button>
+          </div>
         </form>
       </div>
     </div>
@@ -179,6 +183,11 @@
           // calculate the days of the week that will be visible
           this.showDaysOfWeek(this.$moment(to.value), this.$moment(from.value))
         })
+
+        document.querySelector('#add-form').addEventListener('submit', event => {
+          event.preventDefault()
+          this.addEvent()
+        })
       },
       showDaysOfWeek(to, from){
         console.log('showDaysOfWeek')
@@ -235,7 +244,6 @@
       },
       getEventsOfDay(date) {
         return this.events.filter(event => {
-          console.log(date.date(), event.from.date(), event.to.date())
           const is_within_range = date.date() >= event.from.date() && date.date() <= event.to.date()
           const day_included = true
           return is_within_range && day_included
@@ -290,6 +298,21 @@
           .to(add_event_el, { zIndex: -1, duration: 0 })
         timeline.play()
         document.body.style.overflow = 'auto'
+      },
+      addEvent() {
+        const days = [...document.querySelectorAll('input[type="checkbox"]:checked')]
+            .map(checkbox => parseInt(checkbox.id.split('-')[1]))
+        this.events.push({
+          title: document.querySelector('#title').value,
+          from: this.$moment(document.querySelector('#from').value),
+          to: this.$moment(document.querySelector('#to').value),
+          days
+        })
+        this.buildCalendar(this.$moment())
+        console.log(this.events)
+      },
+      editEvent() {
+        //
       }
     },
     mounted() {
