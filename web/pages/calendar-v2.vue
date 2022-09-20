@@ -244,7 +244,9 @@
       },
       getEventsOfDay(date) {
         return this.events.filter(event => {
-          const is_within_range = date.date() >= event.from.date() && date.date() <= event.to.date()
+          const is_within_range =
+            date.date() >= event.from.date() && date.date() <= event.to.date() &&
+            date.month() >= event.from.month() && date.month() <= event.to.month()
           const day_included = true
           return is_within_range && day_included
         })
