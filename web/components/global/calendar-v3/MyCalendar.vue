@@ -5,15 +5,27 @@
         :class="[
           attr['calendar__prev-week']
         ]"
-      >Prev</button>
+        @click="week_offset--"
+      >
+        <nuxt-img 
+          src="assets/placeholders/date-prev.svg" 
+          :class="attr['calendar__top-btn']"
+        />
+      </button>
       <span :class="attr['calendar__week-text']">
-        {{ current_date.format('DD MMM') }} - {{ current_date.clone().add(7, 'days').format('DD MMM') }}
+        {{ startDate.format('DD MMM') }} - {{ startDate.clone().add(7, 'days').format('DD MMM') }}
       </span>
       <button
         :class="[
           attr['calendar__next-week']
         ]"
-      >Next</button>
+        @click="week_offset++"
+      >
+        <nuxt-img 
+          src="assets/placeholders/date-prev.svg" 
+          :class="attr['calendar__top-btn']"
+        />
+      </button>
     </div>
     <div :class="attr['calendar__body']">
       <my-calendar-column
@@ -35,12 +47,16 @@
     },
     data({ $moment }) {
       return {
-        current_date: $moment()
+        current_date: $moment(),
+        week_offset: 0
       }
     },
     computed: {
       startDate() {
-        return this.current_date.clone().day(1)
+        return this.current_date
+          .clone()
+          .day(1)
+          .add(this.week_offset * 8, 'days')
       }
     },
     mounted () {
@@ -57,6 +73,11 @@
       display: flex
       justify-content: space-between
       align-items: center
+      & ^[0]__top-btn
+        cursor: pointer
+      & ^[0]__next-week
+        & ^[0]__top-btn
+          transform: rotateZ(180deg)
       & ^[0]__week-text
         font-size: 30px
         text-transform: uppercase

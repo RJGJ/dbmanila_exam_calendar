@@ -35,6 +35,15 @@
         date: start_date.clone().add(offset, 'days')
       }
     },
+    watch: {
+      start_date: {
+        handler(new_val, old_val) {
+          if ({ ...new_val } == { ...old_val }) return
+          this.date = new_val.clone().add(this.offset, 'days')
+        },
+        deep: true
+      }
+    }
   }
 </script>
 
