@@ -10,6 +10,7 @@
         v-for="key in 5"
         :key="key"
         :date="date"
+        :finished="date.diff($moment(), 'days') < 0"
       />
     </div>
   </div>
@@ -28,6 +29,10 @@
       offset: {
         type: Number,
         require: true
+      },
+      events: {
+        type: Array,
+        required: true
       }
     },
     data({ start_date, offset }) {

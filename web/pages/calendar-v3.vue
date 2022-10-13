@@ -1,6 +1,6 @@
 <template>
   <div>
-    <my-calendar />
+    <my-calendar :events="events" />
   </div>
 </template>
 
@@ -8,6 +8,11 @@
   export default {
     components: {
       MyCalendar: () => import('~/components/global/calendar-v3/MyCalendar'),
+    },
+    data() {
+      return {
+        events: []
+      }
     },
   }
 </script>

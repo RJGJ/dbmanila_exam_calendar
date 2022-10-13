@@ -2,7 +2,7 @@
   <div
     :class="[
       attr['event'],
-      event.finished && attr['event--finished']
+      finished && attr['event--finished']
     ]"
   >
     <div :class="attr['event__top']">
@@ -23,10 +23,10 @@
     </div>
     <div :class="attr['event__bottom']">
       <button
-        @click="!event.finished && book()"
+        @click="!finished && book()"
         :class="attr['event__button']"
-        :disabled="event.finished"
-      >{{ event.finished ? 'Class is over' : 'Book now' }}</button>
+        :disabled="finished"
+      >{{ finished ? 'Class is over' : 'Book now' }}</button>
     </div>
   </div>
 </template>
@@ -38,6 +38,10 @@
         type: Object,
         default: () => ({})
       },
+      finished: {
+        type: Boolean,
+        required: true
+      }
     },
     data({ date }) {
       return {
@@ -52,7 +56,6 @@
           time: date.format('hh:mm a'),
           location: 'Online Class',
           duration: '45 Minutes',
-          finished: false
         }
       }
     },
